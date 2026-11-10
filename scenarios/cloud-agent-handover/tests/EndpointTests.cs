@@ -19,11 +19,15 @@ public sealed class EndpointTests(HandoverAppFactory factory)
     }
 
     [Fact]
-    public async Task Feature_documents_the_initial_unfinished_state()
+    public async Task Feature_returns_the_documented_success_contract()
     {
         var response = await client.PostAsync("/api/feature", content: null);
 
-        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/json", response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(
+            """{"status":"completed","message":"The unfinished feature is now implemented."}""",
+            await response.Content.ReadAsStringAsync());
     }
 
     [Fact]
